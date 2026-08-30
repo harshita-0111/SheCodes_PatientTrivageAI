@@ -81,6 +81,8 @@ def _get_artifact() -> ModelArtifact | None:
 def reset_artifact_cache() -> None:
     """Call after retraining so a running API process picks up the new model without a restart."""
     _get_artifact.cache_clear()
+    _predict_cache.clear()
+
 
 
 _VITAL_SOURCE_KEYS = {
@@ -177,7 +179,25 @@ def _risk_score(probabilities: dict[int, float], predicted_class: int, classes: 
     return int(round(min(100, max(0, score))))
 
 
+_predict_cache: dict[tuple, dict] = {}
+
+
 def predict(patient: dict) -> dict:
+    # Convert patient dict to a hashable tuple to cache the prediction
+    def _make_hashable(val):
+        if isinstance(val, dict):
+            return tuple(sorted((k, _make_hashable(v)) for k, v in val.items()))
+        if isinstance(val, list):
+            return tuple(_make_hashable(v) for v in val)
+        return val
+
+    try:
+        cache_key = tuple(sorted((k, _make_hashable(v)) for k, v in patient.items()))
+        if cache_key in _predict_cache:
+            return _predict_cache[cache_key]
+    except Exception:
+        cache_key = None
+
     """
     Score one patient end to end: rule engine, ensemble, uncertainty.
 
@@ -303,4 +323,8 @@ def predict(patient: dict) -> dict:
         result["priority"], result["risk_score"], result["confidence"], result["escalated"],
         rule_result.priority_label, PRIORITY_LABELS[ml_predicted_class],
     )
+    if cache_key is not None:
+        if len(_predict_cache) > 2000:
+            _predict_cache.clear()
+        _predict_cache[cache_key] = result
     return result

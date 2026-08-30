@@ -22,7 +22,7 @@ export default {
           mint: "#34D07F",    // Mint accent green
           mintInk: "#1B9A63", // Mint green text
           wash: "#F1F8F4",    // Soft green wash background
-          blue: "#A8C6FA",    // Soft blue primary button color
+          blue: "#1E40AF",    // Deep blue primary button color
           alert: "#FF5A5A",
         },
       },
