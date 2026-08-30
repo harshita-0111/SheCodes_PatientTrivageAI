@@ -55,7 +55,7 @@ optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 N_SPLITS = 5
 RANDOM_STATE = 42
-N_OPTUNA_TRIALS = 20  # kept modest: n=205 overfits a large search fast
+N_OPTUNA_TRIALS = 60  # Increased trials for a more thorough hyperparameter search
 
 
 def _tune_xgboost(X: np.ndarray, y: np.ndarray, cv: StratifiedKFold) -> dict:
@@ -91,7 +91,7 @@ def _tune_lightgbm(X: np.ndarray, y: np.ndarray, cv: StratifiedKFold) -> dict:
             num_leaves=trial.suggest_int("num_leaves", 7, 31),
             min_child_samples=trial.suggest_int("min_child_samples", 5, 20),
         )
-        model = LGBMClassifier(**params, random_state=RANDOM_STATE, verbose=-1)
+        model = LGBMClassifier(**params, class_weight="balanced", random_state=RANDOM_STATE, verbose=-1)
         preds = cross_val_predict(model, X, y, cv=cv, method="predict_proba")
         return log_loss(y, preds, labels=sorted(set(y)))
 
@@ -111,7 +111,7 @@ def _tune_catboost(X: np.ndarray, y: np.ndarray, cv: StratifiedKFold) -> dict:
             learning_rate=trial.suggest_float("learning_rate", 0.02, 0.2, log=True),
             l2_leaf_reg=trial.suggest_float("l2_leaf_reg", 1.0, 8.0, log=True),
         )
-        model = CatBoostClassifier(**params, random_state=RANDOM_STATE, verbose=0)
+        model = CatBoostClassifier(**params, auto_class_weights="Balanced", random_state=RANDOM_STATE, verbose=0)
         preds = cross_val_predict(model, X, y, cv=cv, method="predict_proba")
         return log_loss(y, preds, labels=sorted(set(y)))
 
@@ -133,10 +133,10 @@ def _build_base_models(X: np.ndarray, y: np.ndarray, cv: StratifiedKFold) -> lis
 
     return [
         ("xgboost", XGBClassifier(**xgb_params, eval_metric="mlogloss", random_state=RANDOM_STATE)),
-        ("lightgbm", LGBMClassifier(**lgbm_params, random_state=RANDOM_STATE, verbose=-1)),
-        ("catboost", CatBoostClassifier(**cat_params, random_state=RANDOM_STATE, verbose=0)),
+        ("lightgbm", LGBMClassifier(**lgbm_params, class_weight="balanced", random_state=RANDOM_STATE, verbose=-1)),
+        ("catboost", CatBoostClassifier(**cat_params, auto_class_weights="Balanced", random_state=RANDOM_STATE, verbose=0)),
         ("hist_gradient_boosting", HistGradientBoostingClassifier(
-            max_iter=150, max_depth=3, learning_rate=0.08, random_state=RANDOM_STATE,
+            max_iter=150, max_depth=3, learning_rate=0.08, class_weight="balanced", random_state=RANDOM_STATE,
         )),
     ]
 

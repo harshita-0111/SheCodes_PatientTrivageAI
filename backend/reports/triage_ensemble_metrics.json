@@ -1,6 +1,6 @@
 {
-  "version": "stacking-ensemble-20260829-1938",
-  "trained_at": "2026-08-29T19:38:16.198832+00:00",
+  "version": "stacking-ensemble-20260830-1649",
+  "trained_at": "2026-08-30T16:49:20.804217+00:00",
   "n_labeled": 205,
   "classes_trained": [
     1,
@@ -10,27 +10,27 @@
   "classes_excluded_sparse": "see logs \u2014 fewer than 10 examples",
   "evaluation_method": "5-fold stratified out-of-fold CV, NOT held-out test (n=205 is too small to trust a single split)",
   "oof_metrics": {
-    "accuracy": 0.4976,
-    "macro_f1": 0.5166,
-    "weighted_f1": 0.4897,
-    "macro_recall": 0.5756,
-    "macro_precision": 0.4885,
-    "log_loss": 0.9072,
+    "accuracy": 0.5073,
+    "macro_f1": 0.5161,
+    "weighted_f1": 0.4947,
+    "macro_recall": 0.5986,
+    "macro_precision": 0.489,
+    "log_loss": 0.8752,
     "per_class_recall": {
-      "1": 0.7778,
-      "2": 0.3711,
-      "3": 0.5778
+      "1": 0.8333,
+      "2": 0.3402,
+      "3": 0.6222
     },
     "confusion_matrix": {
-      "true_1_pred_1": 14,
-      "true_1_pred_2": 4,
-      "true_1_pred_3": 0,
-      "true_2_pred_1": 14,
-      "true_2_pred_2": 36,
+      "true_1_pred_1": 15,
+      "true_1_pred_2": 2,
+      "true_1_pred_3": 1,
+      "true_2_pred_1": 17,
+      "true_2_pred_2": 33,
       "true_2_pred_3": 47,
-      "true_3_pred_1": 2,
-      "true_3_pred_2": 36,
-      "true_3_pred_3": 52
+      "true_3_pred_1": 3,
+      "true_3_pred_2": 31,
+      "true_3_pred_3": 56
     }
   },
   "known_limitations": [
