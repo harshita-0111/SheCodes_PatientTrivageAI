@@ -12,8 +12,9 @@ import axios from "axios";
 // on the backend (no /ws/live), so useLiveQueue() below POLLS /queue on
 // an interval instead of opening a socket. This is a deliberate, stated
 // substitution, not a placeholder pretending to be real-time.
+const apiBase = import.meta.env.VITE_API_URL || "";
 export const apiClient = axios.create({
-  baseURL: "/api/v1",
+  baseURL: `${apiBase}/api/v1`,
   timeout: 15000,
   headers: { "Content-Type": "application/json" },
 });

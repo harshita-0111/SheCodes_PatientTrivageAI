@@ -16,6 +16,17 @@ import { useEffect, useRef, useState } from "react";
 // kill the live feed.
 
 function buildSocketUrl() {
+  const customApiUrl = import.meta.env.VITE_API_URL;
+  if (customApiUrl) {
+    try {
+      const url = new URL(customApiUrl);
+      const protocol = url.protocol === "https:" ? "wss:" : "ws:";
+      return `${protocol}//${url.host}/ws/live`;
+    } catch (e) {
+      console.error("Invalid VITE_API_URL for WebSocket:", e);
+    }
+  }
+
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   // In dev, Vite's proxy (see vite.config.js) only forwards HTTP; for
   // the WebSocket we talk to the backend port directly.
